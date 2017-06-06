@@ -13,6 +13,7 @@ import OpenGL.GLUT as glut
 refreshDelay = 1
 blockSize = 0.3
 
+#Diegoaqui
 
 class Bloco:
     def __init__(self, x, y, color):
