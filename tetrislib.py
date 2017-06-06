@@ -162,6 +162,43 @@ class PecaL(Peca):
         self.blocos.append(Bloco(x + 2, y + 1, color))
 
 
+    def rotateClock(self):
+        if self.pos == 0:
+            self.blocos[0].moveUp()
+            self.blocos[0].moveRight()
+            self.blocos[2].moveLeft()
+            self.blocos[2].moveDown()
+            self.blocos[3].moveDown()
+            self.blocos[3].moveDown()
+            self.pos = 1
+        elif self.pos == 1:
+            self.blocos[0].moveRight()
+            self.blocos[0].moveDown()
+            self.blocos[2].moveLeft()
+            self.blocos[2].moveUp()
+            self.blocos[3].moveLeft()
+            self.blocos[3].moveLeft()
+            self.pos = 2
+        elif self.pos == 2:
+            self.blocos[0].moveDown()
+            self.blocos[0].moveLeft()
+            self.blocos[2].moveUp()
+            self.blocos[2].moveRight()
+            self.blocos[3].moveUp()
+            self.blocos[3].moveUp()
+            self.pos = 3
+        elif self.pos == 3:
+            self.blocos[0].moveLeft()
+            self.blocos[0].moveUp()
+            self.blocos[2].moveRight()
+            self.blocos[2].moveDown()
+            self.blocos[3].moveRight()
+            self.blocos[3].moveRight()
+            self.pos = 0
+
+    def rotateAntiClock(self):
+        for i in range(3): self.rotateClock()
+
 class PecaJ(Peca):
     def __init__(self, x, y, color):
         self.blocos = []
@@ -170,6 +207,43 @@ class PecaJ(Peca):
         self.blocos.append(Bloco(x + 2, y, color))
         self.blocos.append(Bloco(x + 2, y - 1, color))
 
+
+    def rotateClock(self):
+        if self.pos == 0:
+            self.blocos[0].moveUp()
+            self.blocos[0].moveRight()
+            self.blocos[2].moveLeft()
+            self.blocos[2].moveDown()
+            self.blocos[3].moveLeft()
+            self.blocos[3].moveLeft()
+            self.pos = 1
+        elif self.pos == 1:
+            self.blocos[0].moveRight()
+            self.blocos[0].moveDown()
+            self.blocos[2].moveLeft()
+            self.blocos[2].moveUp()
+            self.blocos[3].moveUp()
+            self.blocos[3].moveUp()
+            self.pos = 2
+        elif self.pos == 2:
+            self.blocos[0].moveDown()
+            self.blocos[0].moveLeft()
+            self.blocos[2].moveUp()
+            self.blocos[2].moveRight()
+            self.blocos[3].moveRight()
+            self.blocos[3].moveRight()
+            self.pos = 3
+        elif self.pos == 3:
+            self.blocos[0].moveLeft()
+            self.blocos[0].moveUp()
+            self.blocos[2].moveRight()
+            self.blocos[2].moveDown()
+            self.blocos[3].moveDown()
+            self.blocos[3].moveDown()
+            self.pos = 0
+
+    def rotateAntiClock(self):
+        for i in range(3): self.rotateClock()
 
 class PecaS(Peca):
     def __init__(self, x, y, color):
@@ -180,6 +254,43 @@ class PecaS(Peca):
         self.blocos.append(Bloco(x + 1, y + 2, color))
 
 
+    def rotateClock(self):
+        if self.pos == 0:
+            self.blocos[0].moveUp()
+            self.blocos[0].moveUp()
+            self.blocos[1].moveUp()
+            self.blocos[1].moveRight()
+            self.blocos[3].moveRight()
+            self.blocos[3].moveDown()
+            self.pos = 1
+        elif self.pos == 1:
+            self.blocos[0].moveRight()
+            self.blocos[0].moveRight()
+            self.blocos[1].moveRight()
+            self.blocos[1].moveDown()
+            self.blocos[3].moveDown()
+            self.blocos[3].moveLeft()
+            self.pos = 2
+        elif self.pos == 2:
+            self.blocos[0].moveDown()
+            self.blocos[0].moveDown()
+            self.blocos[1].moveDown()
+            self.blocos[1].moveLeft()
+            self.blocos[3].moveLeft()
+            self.blocos[3].moveUp()
+            self.pos = 3
+        elif self.pos == 3:
+            self.blocos[0].moveLeft()
+            self.blocos[0].moveLeft()
+            self.blocos[1].moveLeft()
+            self.blocos[1].moveUp()
+            self.blocos[3].moveUp()
+            self.blocos[3].moveRight()
+            self.pos = 0
+
+    def rotateAntiClock(self):
+        for i in range(3): self.rotateClock()
+
 
 class PecaZ(Peca):
     def __init__(self, x, y, color):
@@ -188,6 +299,44 @@ class PecaZ(Peca):
         self.blocos.append(Bloco(x, y + 1, color))
         self.blocos.append(Bloco(x - 1, y + 1, color))
         self.blocos.append(Bloco(x - 1, y + 2, color))
+
+
+    def rotateClock(self):
+        if self.pos == 0:
+            self.blocos[0].moveLeft()
+            self.blocos[0].moveLeft()
+            self.blocos[1].moveDown()
+            self.blocos[1].moveLeft()
+            self.blocos[3].moveDown()
+            self.blocos[3].moveRight()
+            self.pos = 1
+        elif self.pos == 1:
+            self.blocos[0].moveUp()
+            self.blocos[0].moveUp()
+            self.blocos[1].moveLeft()
+            self.blocos[1].moveUp()
+            self.blocos[3].moveDown()
+            self.blocos[3].moveLeft()
+            self.pos = 2
+        elif self.pos == 2:
+            self.blocos[0].moveRight()
+            self.blocos[0].moveRight()
+            self.blocos[1].moveUp()
+            self.blocos[1].moveRight()
+            self.blocos[3].moveLeft()
+            self.blocos[3].moveUp()
+            self.pos = 3
+        elif self.pos == 3:
+            self.blocos[0].moveDown()
+            self.blocos[0].moveDown()
+            self.blocos[1].moveRight()
+            self.blocos[1].moveDown()
+            self.blocos[3].moveUp()
+            self.blocos[3].moveRight()
+            self.pos = 0
+
+    def rotateAntiClock(self):
+        for i in range(3): self.rotateClock()
 
 
 def gerarPeca(shape='R', x='default', y='default', color='default'):

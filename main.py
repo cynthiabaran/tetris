@@ -71,7 +71,7 @@ def keyboard(key, x, y) :
 
 def main() :
     global peca, timer
-    peca = gerarPeca()
+    peca = gerarPeca(shape='Z')
     timer = time.time()
     _ = glut.glutInit(sys.argv)
     glut.glutInitDisplayMode(glut.GLUT_DOUBLE | glut.GLUT_RGB)
