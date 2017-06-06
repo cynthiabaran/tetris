@@ -8,7 +8,7 @@ import random
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
 import OpenGL.GLUT as glut
-
+#oi
 # constantes
 refreshDelay = 1
 blockSize = 0.3
