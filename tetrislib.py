@@ -117,6 +117,7 @@ class PecaI(Peca):
         self.blocos.append(Bloco(x + 2, y, color))
         self.blocos.append(Bloco(x + 3, y, color))
         self.pos = 0
+
     def rotateClock(self):
         if self.pos == 0:
             self.blocos[0].moveUp()
@@ -160,6 +161,7 @@ class PecaL(Peca):
         self.blocos.append(Bloco(x + 1, y, color))
         self.blocos.append(Bloco(x + 2, y, color))
         self.blocos.append(Bloco(x + 2, y + 1, color))
+        self.pos = 0
 
 
     def rotateClock(self):
@@ -206,6 +208,7 @@ class PecaJ(Peca):
         self.blocos.append(Bloco(x + 1, y, color))
         self.blocos.append(Bloco(x + 2, y, color))
         self.blocos.append(Bloco(x + 2, y - 1, color))
+        self.pos = 0
 
 
     def rotateClock(self):
@@ -252,6 +255,7 @@ class PecaS(Peca):
         self.blocos.append(Bloco(x, y + 1, color))
         self.blocos.append(Bloco(x + 1, y + 1, color))
         self.blocos.append(Bloco(x + 1, y + 2, color))
+        self.pos = 0
 
 
     def rotateClock(self):
@@ -299,6 +303,7 @@ class PecaZ(Peca):
         self.blocos.append(Bloco(x, y + 1, color))
         self.blocos.append(Bloco(x - 1, y + 1, color))
         self.blocos.append(Bloco(x - 1, y + 2, color))
+        self.pos = 0
 
 
     def rotateClock(self):
@@ -338,6 +343,15 @@ class PecaZ(Peca):
     def rotateAntiClock(self):
         for i in range(3): self.rotateClock()
 
+class Tabuleiro:
+    def __init__(self):
+        self.blocos = []
+    def moverBlocos(self, peca):
+        for bloco in peca.blocos:
+            self.blocos.append(bloco)
+    def render(self):
+        for bloco in self.blocos:
+            bloco.render()
 
 def gerarPeca(shape='R', x='default', y='default', color='default'):
     if shape == 'R':

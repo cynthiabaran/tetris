@@ -22,9 +22,10 @@ def init() :
 
 
 def display() :
-    global peca
+    global peca, tabuleiro
     gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
     peca.render()
+    tabuleiro.render()
     glut.glutSwapBuffers()
 
 
@@ -47,7 +48,7 @@ def idle():
 
 
 def keyboard(key, x, y) :
-    global peca, refreshDelay
+    global peca, refreshDelay, tabuleiro
     if key == 'w':
         peca.moveUp()
     elif key == 's':
@@ -64,14 +65,18 @@ def keyboard(key, x, y) :
         peca.rotateClock()
     elif key == 'q':
         peca.rotateAntiClock()
+    elif key == 'k':
+        tabuleiro.moverBlocos(peca)
+        peca = gerarPeca()
     else :
         return
     glut.glutPostRedisplay()
 
 
 def main() :
-    global peca, timer
-    peca = gerarPeca(shape='Z')
+    global peca, timer, tabuleiro
+    peca = gerarPeca()
+    tabuleiro = Tabuleiro()
     timer = time.time()
     _ = glut.glutInit(sys.argv)
     glut.glutInitDisplayMode(glut.GLUT_DOUBLE | glut.GLUT_RGB)
