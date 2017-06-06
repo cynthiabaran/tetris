@@ -12,8 +12,9 @@ import OpenGL.GLUT as glut
 # constantes
 refreshDelay = 1
 blockSize = 0.3
+initialX = 0
+initialY = 3
 
-#Diegoaqui
 
 class Bloco:
     def __init__(self, x, y, color):
@@ -23,22 +24,22 @@ class Bloco:
 
     def render(self):
         gl.glPushMatrix()
-        gl.glTranslatef(self.x, self.y, 0.0)
+        gl.glTranslatef((initialX + self.x) * blockSize, (initialY + self.y) * blockSize, 0.0)
         gl.glColor3f(self.color['r'], self.color['g'], self.color['b'])
         glut.glutWireCube(blockSize)
         gl.glPopMatrix()
 
     def moveDown(self):
-        self.y -= blockSize
+        self.y -= 1
 
     def moveUp(self):
-        self.y += blockSize
+        self.y += 1
 
     def moveLeft(self):
-        self.x -= blockSize
+        self.x -= 1
 
     def moveRight(self):
-        self.x += blockSize
+        self.x += 1
 
 class Peca:
     def render(self):
@@ -65,9 +66,9 @@ class PecaT(Peca):
     def __init__(self, x, y, color):
         self.blocos = []
         self.blocos.append(Bloco(x, y, color))
-        self.blocos.append(Bloco(x + blockSize, y, color))
-        self.blocos.append(Bloco(x + 2*blockSize, y, color))
-        self.blocos.append(Bloco(x + blockSize, y + blockSize, color))
+        self.blocos.append(Bloco(x + 1, y, color))
+        self.blocos.append(Bloco(x + 2, y, color))
+        self.blocos.append(Bloco(x + 1, y + 1, color))
         self.pos = 0
 
     def rotateClock(self):
@@ -112,9 +113,9 @@ class PecaI(Peca):
     def __init__(self, x, y, color):
         self.blocos = []
         self.blocos.append(Bloco(x, y, color))
-        self.blocos.append(Bloco(x + blockSize, y, color))
-        self.blocos.append(Bloco(x + 2*blockSize, y, color))
-        self.blocos.append(Bloco(x + 3*blockSize, y, color))
+        self.blocos.append(Bloco(x + 1, y, color))
+        self.blocos.append(Bloco(x + 2, y, color))
+        self.blocos.append(Bloco(x + 3, y, color))
         self.pos = 0
     def rotateClock(self):
         if self.pos == 0:
@@ -144,9 +145,9 @@ class PecaO(Peca):
     def __init__(self, x, y, color):
         self.blocos = []
         self.blocos.append(Bloco(x, y, color))
-        self.blocos.append(Bloco(x + blockSize, y, color))
-        self.blocos.append(Bloco(x, y + blockSize, color))
-        self.blocos.append(Bloco(x + blockSize, y + blockSize, color))
+        self.blocos.append(Bloco(x + 1, y, color))
+        self.blocos.append(Bloco(x, y + 1, color))
+        self.blocos.append(Bloco(x + 1, y + 1, color))
     def rotateClock(self):
         pass
     def rotateAntiClock(self):
@@ -156,27 +157,27 @@ class PecaL(Peca):
     def __init__(self, x, y, color):
         self.blocos = []
         self.blocos.append(Bloco(x, y, color))
-        self.blocos.append(Bloco(x + blockSize, y, color))
-        self.blocos.append(Bloco(x + 2*blockSize, y, color))
-        self.blocos.append(Bloco(x + 2*blockSize, y + blockSize, color))
+        self.blocos.append(Bloco(x + 1, y, color))
+        self.blocos.append(Bloco(x + 2, y, color))
+        self.blocos.append(Bloco(x + 2, y + 1, color))
 
 
 class PecaJ(Peca):
     def __init__(self, x, y, color):
         self.blocos = []
         self.blocos.append(Bloco(x, y, color))
-        self.blocos.append(Bloco(x + blockSize, y, color))
-        self.blocos.append(Bloco(x + 2*blockSize, y, color))
-        self.blocos.append(Bloco(x + 2*blockSize, y - blockSize, color))
+        self.blocos.append(Bloco(x + 1, y, color))
+        self.blocos.append(Bloco(x + 2, y, color))
+        self.blocos.append(Bloco(x + 2, y - 1, color))
 
 
 class PecaS(Peca):
     def __init__(self, x, y, color):
         self.blocos = []
         self.blocos.append(Bloco(x, y, color))
-        self.blocos.append(Bloco(x, y + blockSize, color))
-        self.blocos.append(Bloco(x + blockSize, y + blockSize, color))
-        self.blocos.append(Bloco(x + blockSize, y + 2*blockSize, color))
+        self.blocos.append(Bloco(x, y + 1, color))
+        self.blocos.append(Bloco(x + 1, y + 1, color))
+        self.blocos.append(Bloco(x + 1, y + 2, color))
 
 
 
@@ -184,14 +185,20 @@ class PecaZ(Peca):
     def __init__(self, x, y, color):
         self.blocos = []
         self.blocos.append(Bloco(x, y, color))
-        self.blocos.append(Bloco(x, y + blockSize, color))
-        self.blocos.append(Bloco(x - blockSize, y + blockSize, color))
-        self.blocos.append(Bloco(x - blockSize, y + 2*blockSize, color))
+        self.blocos.append(Bloco(x, y + 1, color))
+        self.blocos.append(Bloco(x - 1, y + 1, color))
+        self.blocos.append(Bloco(x - 1, y + 2, color))
 
 
-def gerarPeca(shape='R', x=0, y=3, color='default'):
+def gerarPeca(shape='R', x='default', y='default', color='default'):
     if shape == 'R':
         shape = random.choice(['T', 'O', 'I', 'L', 'J', 'S', 'Z'])
+
+    if x == 'default':
+        x = initialX
+
+    if y == 'default':
+        y = initialY
 
     if shape == 'T':
         if color == 'default': color = {'r':1.0, 'g':0.0, 'b':0.0}
