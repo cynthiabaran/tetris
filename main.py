@@ -30,7 +30,8 @@ def display() :
     gl.glLight(gl.GL_LIGHT0, gl.GL_POSITION, [5.0, 10.0, 5.0, 1.0])
     gl.glLight(gl.GL_LIGHT0, gl.GL_DIFFUSE,  [1.0,  1.0, 1.0, 1.0])
     gl.glLight(gl.GL_LIGHT0, gl.GL_SPECULAR, [1.0,  1.0, 1.0, 1.0])
-    gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, [0.1, 0.1, 0.1, 1.0])
+
+    gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, [0.3, 0.3, 0.3, 1.0])
     peca.render()
     tabuleiro.render()
     glut.glutSwapBuffers()
