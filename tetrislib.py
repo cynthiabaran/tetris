@@ -10,10 +10,123 @@ import OpenGL.GLU as glu
 import OpenGL.GLUT as glut
 #oi
 # constantes
-refreshDelay = 1
 blockSize = 0.2
 initialX = 0
 initialY = 9
+
+class Tetris:
+    def __init__(self):
+        self.tabuleiro = Tabuleiro()
+        self.peca = self.gerarPeca()
+        self.refreshDelay = 1
+        self.oldRefreshDelay = 0
+        self.timer = 0
+
+    def render(self):
+        self.peca.render()
+        self.tabuleiro.render()
+
+    def idle(self):
+        if self.refreshDelay and time.time() - self.timer > self.refreshDelay:
+            self.timer = time.time()
+            if not self.moveDown():
+                self.novaPeca()
+    
+    def moveDown(self):
+        canMove = True
+        for bloco in self.peca.blocos:
+            canMove = canMove and bloco.checkDown(self.tabuleiro)
+        if canMove:
+            for bloco in self.peca.blocos:
+                bloco.moveDown()
+            return True
+        return False
+    
+    def moveUp(self):
+        canMove = True
+        for bloco in self.peca.blocos:
+            canMove = canMove and bloco.checkUp(self.tabuleiro)
+        if canMove:
+            for bloco in self.blocos:
+                bloco.moveUp()
+            return True
+        return False
+    
+    def moveLeft(self):
+        canMove = True
+        for bloco in self.peca.blocos:
+            canMove = canMove and bloco.checkLeft(self.tabuleiro)
+        if canMove:
+            for bloco in self.peca.blocos:
+                bloco.moveLeft()
+            return True
+        return False
+    
+    def moveRight(self):
+        canMove = True
+        for bloco in self.peca.blocos:
+            canMove = canMove and bloco.checkRight(self.tabuleiro)
+        if canMove:
+            for bloco in self.peca.blocos:
+                bloco.moveRight()
+            return True
+        return False
+    
+    def rotateClock(self):
+        self.peca.rotateClock()
+    
+    def rotateAntiClock(self):
+        self.peca.rotateAntiClock()
+
+    def pause(self):
+        if self.refreshDelay:
+            self.oldRefreshDelay = self.refreshDelay
+            self.refreshDelay = 0
+        else:
+            self.refreshDelay = self.oldRefreshDelay
+
+    def moverBlocos(self):
+        for bloco in self.peca.blocos:
+            self.tabuleiro.blocos.append(bloco)
+
+    def novaPeca(self):
+        self.moverBlocos()
+        self.peca = self.gerarPeca()
+
+    def gerarPeca(self):
+        shape = random.choice(['T', 'O', 'I', 'L', 'J', 'S', 'Z'])
+
+        x = initialX
+        y = initialY
+
+        if shape == 'T':
+            color = {'r':1.0, 'g':0.0, 'b':0.0}
+            return PecaT(x, y, color)
+
+        elif shape == 'O':
+            color = {'r':0.0, 'g':1.0, 'b':0.0}
+            return PecaO(x, y, color)
+
+        elif shape == 'I':
+            color = {'r':1.0, 'g':1.0, 'b':1.0}
+            return PecaI(x, y, color)
+
+        elif shape == 'L':
+            color = {'r':1.0, 'g':0.0, 'b':1.0}
+            return PecaL(x, y, color)
+
+        elif shape == 'J':
+            color = {'r':0.0, 'g':1.0, 'b':1.0}
+            return PecaJ(x, y, color)
+
+        elif shape == 'S':
+            color = {'r':1.0, 'g':1.0, 'b':0.0}
+            return PecaS(x, y, color)
+
+        elif shape == 'Z':
+            color = {'r':0.0, 'g':0.0, 'b':1.0}
+            return PecaZ(x, y, color)
+
 
 
 class Bloco:
@@ -63,45 +176,6 @@ class Peca:
         for bloco in self.blocos:
             bloco.render()
 
-    def moveDown(self, tabuleiro):
-        canMove = True
-        for bloco in self.blocos:
-            canMove = canMove and bloco.checkDown(tabuleiro)
-        if canMove:
-            for bloco in self.blocos:
-                bloco.moveDown()
-            return True
-        return False
-    
-    def moveUp(self, tabuleiro):
-        canMove = True
-        for bloco in self.blocos:
-            canMove = canMove and bloco.checkUp(tabuleiro)
-        if canMove:
-            for bloco in self.blocos:
-                bloco.moveUp()
-            return True
-        return False
-    
-    def moveLeft(self, tabuleiro):
-        canMove = True
-        for bloco in self.blocos:
-            canMove = canMove and bloco.checkLeft(tabuleiro)
-        if canMove:
-            for bloco in self.blocos:
-                bloco.moveLeft()
-            return True
-        return False
-    
-    def moveRight(self, tabuleiro):
-        canMove = True
-        for bloco in self.blocos:
-            canMove = canMove and bloco.checkRight(tabuleiro)
-        if canMove:
-            for bloco in self.blocos:
-                bloco.moveRight()
-            return True
-        return False
 
 class PecaT(Peca):
     def __init__(self, x, y, color):
@@ -391,9 +465,6 @@ class Tabuleiro:
         barreiraEsquerda = [Bloco(-6, -10 + i, gray) for i in range(20)]
         barreiraDireita  = [Bloco(5, -10 + i,  gray) for i in range(20)]
         self.blocos = barreiraDireita + barreiraInferior + barreiraEsquerda
-    def moverBlocos(self, peca):
-        for bloco in peca.blocos:
-            self.blocos.append(bloco)
     def render(self):
         for bloco in self.blocos:
             bloco.render()
@@ -404,40 +475,3 @@ class Tabuleiro:
         return True
 
 
-def gerarPeca(shape='R', x='default', y='default', color='default'):
-    if shape == 'R':
-        shape = random.choice(['T', 'O', 'I', 'L', 'J', 'S', 'Z'])
-
-    if x == 'default':
-        x = initialX
-
-    if y == 'default':
-        y = initialY
-
-    if shape == 'T':
-        if color == 'default': color = {'r':1.0, 'g':0.0, 'b':0.0}
-        return PecaT(x, y, color)
-
-    elif shape == 'O':
-        if color == 'default': color = {'r':0.0, 'g':1.0, 'b':0.0}
-        return PecaO(x, y, color)
-
-    elif shape == 'I':
-        if color == 'default': color = {'r':1.0, 'g':1.0, 'b':1.0}
-        return PecaI(x, y, color)
-
-    elif shape == 'L':
-        if color == 'default': color = {'r':1.0, 'g':0.0, 'b':1.0}
-        return PecaL(x, y, color)
-
-    elif shape == 'J':
-        if color == 'default': color = {'r':0.0, 'g':1.0, 'b':1.0}
-        return PecaJ(x, y, color)
-
-    elif shape == 'S':
-        if color == 'default': color = {'r':1.0, 'g':1.0, 'b':0.0}
-        return PecaS(x, y, color)
-
-    elif shape == 'Z':
-        if color == 'default': color = {'r':0.0, 'g':0.0, 'b':1.0}
-        return PecaZ(x, y, color)

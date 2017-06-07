@@ -23,7 +23,7 @@ def init() :
 
 
 def display() :
-    global peca, tabuleiro
+    global tetris
     gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
     # luzes
@@ -32,8 +32,7 @@ def display() :
     gl.glLight(gl.GL_LIGHT0, gl.GL_SPECULAR, [1.0,  1.0, 1.0, 1.0])
 
     gl.glLightModelfv(gl.GL_LIGHT_MODEL_AMBIENT, [0.3, 0.3, 0.3, 1.0])
-    peca.render()
-    tabuleiro.render()
+    tetris.render()
     glut.glutSwapBuffers()
 
 
@@ -48,56 +47,43 @@ def reshape(w, h) :
 
 
 def idle():
-    global timer, peca, speed, tabuleiro
-    if refreshDelay and time.time() - timer > refreshDelay:
-        timer = time.time()
-        if not peca.moveDown(tabuleiro):
-            tabuleiro.moverBlocos(peca)
-            peca = gerarPeca()
+    global tetris
+    tetris.idle()
     display()
 
 
 def keyboard(key, x, y) :
-    global peca, refreshDelay, tabuleiro
+    global tetris
     if key == 'w':
-        while peca.moveDown(tabuleiro):
+        while tetris.moveDown():
             pass
-        novaPeca()
+        tetris.novaPeca()
     elif key == 's':
-        if not peca.moveDown(tabuleiro):
+        if not tetris.moveDown():
             novaPeca()
     elif key == 'a':
-        peca.moveLeft(tabuleiro)
+        tetris.moveLeft()
     elif key == 'd':
-        peca.moveRight(tabuleiro)
+        tetris.moveRight()
     elif key == 'f':
-        refreshDelay /= 1.1
+        tetris.refreshDelay /= 1.1
     elif key == 'r':
-        refreshDelay *= 1.1
+        tetris.refreshDelay *= 1.1
     elif key == 'p':
-        if refreshDelay:
-            refreshDelay = 0
-        else:
-            refreshDelay = 1
+        tetris.pause()
     elif key == 'e':
-        peca.rotateClock()
+        tetris.rotateClock()
     elif key == 'q':
-        peca.rotateAntiClock()
+        tetris.rotateAntiClock()
+    elif key == 'k':
+        tetris.novaPeca()
     else :
         return
     glut.glutPostRedisplay()
 
-def novaPeca():
-    global peca, tabuleiro
-    tabuleiro.moverBlocos(peca)
-    peca = gerarPeca()
-
 def main() :
-    
-    global peca, timer, tabuleiro
-    peca = gerarPeca()
-    tabuleiro = Tabuleiro()
-    timer = time.time()
+    global tetris, timer
+    tetris = Tetris()
 
     _ = glut.glutInit(sys.argv)
     glut.glutInitDisplayMode(glut.GLUT_DOUBLE | glut.GLUT_RGB | glut.GLUT_DEPTH)
