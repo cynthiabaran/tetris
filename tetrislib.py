@@ -25,8 +25,13 @@ class Bloco:
     def render(self):
         gl.glPushMatrix()
         gl.glTranslatef(self.x * blockSize, self.y * blockSize, 0.0)
-        gl.glColor3f(self.color['r'], self.color['g'], self.color['b'])
-        glut.glutWireCube(blockSize)
+        gl.glMaterialfv(gl.GL_FRONT, gl.GL_AMBIENT,  [1.0, 1.0, 0.0, 1.0])
+        gl.glMaterialfv(gl.GL_FRONT, gl.GL_DIFFUSE,  [1.0, 1.0, 0.0, 1.0])
+        gl.glMaterialfv(gl.GL_FRONT, gl.GL_SPECULAR, [1.0, 1.0, 1.0, 1.0])
+        gl.glMaterialfv(gl.GL_FRONT, gl.GL_SHININESS, 100.0)
+        glut.glutSolidCube(blockSize)
+        # gl.glColor3f(self.color['r'], self.color['g'], self.color['b'])
+        # glut.glutWireCube(blockSize)
         gl.glPopMatrix()
 
     def checkDown(self, tabuleiro):
