@@ -40,38 +40,49 @@ def reshape(w, h) :
 
 
 def idle():
-    global timer, peca, speed
-    if time.time() - timer > refreshDelay:
+    global timer, peca, speed, tabuleiro
+    if refreshDelay and time.time() - timer > refreshDelay:
         timer = time.time()
-        peca.moveDown()
+        if not peca.moveDown(tabuleiro):
+            tabuleiro.moverBlocos(peca)
+            peca = gerarPeca()
     display()
 
 
 def keyboard(key, x, y) :
     global peca, refreshDelay, tabuleiro
     if key == 'w':
-        peca.moveUp()
+        while peca.moveDown(tabuleiro):
+            pass
+        novaPeca()
     elif key == 's':
-        peca.moveDown()
+        if not peca.moveDown(tabuleiro):
+            novaPeca()
     elif key == 'a':
-        peca.moveLeft()
+        peca.moveLeft(tabuleiro)
     elif key == 'd':
-        peca.moveRight()
+        peca.moveRight(tabuleiro)
     elif key == 'f':
         refreshDelay /= 1.1
     elif key == 'r':
         refreshDelay *= 1.1
+    elif key == 'p':
+        if refreshDelay:
+            refreshDelay = 0
+        else:
+            refreshDelay = 1
     elif key == 'e':
         peca.rotateClock()
     elif key == 'q':
         peca.rotateAntiClock()
-    elif key == 'k':
-        tabuleiro.moverBlocos(peca)
-        peca = gerarPeca()
     else :
         return
     glut.glutPostRedisplay()
 
+def novaPeca():
+    global peca, tabuleiro
+    tabuleiro.moverBlocos(peca)
+    peca = gerarPeca()
 
 def main() :
     global peca, timer, tabuleiro
@@ -81,7 +92,7 @@ def main() :
     _ = glut.glutInit(sys.argv)
     glut.glutInitDisplayMode(glut.GLUT_DOUBLE | glut.GLUT_RGB)
 
-    glut.glutInitWindowSize(500, 500)
+    glut.glutInitWindowSize(400, 600)
     glut.glutInitWindowPosition(100, 100)
     _ = glut.glutCreateWindow('Tetris!!!')
 

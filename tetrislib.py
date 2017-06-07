@@ -11,9 +11,9 @@ import OpenGL.GLUT as glut
 #oi
 # constantes
 refreshDelay = 1
-blockSize = 0.3
+blockSize = 0.2
 initialX = 0
-initialY = 3
+initialY = 9
 
 
 class Bloco:
@@ -24,10 +24,22 @@ class Bloco:
 
     def render(self):
         gl.glPushMatrix()
-        gl.glTranslatef((initialX + self.x) * blockSize, (initialY + self.y) * blockSize, 0.0)
+        gl.glTranslatef(self.x * blockSize, self.y * blockSize, 0.0)
         gl.glColor3f(self.color['r'], self.color['g'], self.color['b'])
         glut.glutWireCube(blockSize)
         gl.glPopMatrix()
+
+    def checkDown(self, tabuleiro):
+        return tabuleiro.podeMover(self.x, self.y-1)
+    
+    def checkUp(self, tabuleiro):
+        return tabuleiro.podeMover(self.x, self.y+1)
+    
+    def checkLeft(self, tabuleiro):
+        return tabuleiro.podeMover(self.x-1, self.y)
+    
+    def checkRight(self, tabuleiro):
+        return tabuleiro.podeMover(self.x+1, self.y)
 
     def moveDown(self):
         self.y -= 1
@@ -46,21 +58,45 @@ class Peca:
         for bloco in self.blocos:
             bloco.render()
 
-    def moveDown(self):
+    def moveDown(self, tabuleiro):
+        canMove = True
         for bloco in self.blocos:
-            bloco.moveDown()
-
-    def moveUp(self):
+            canMove = canMove and bloco.checkDown(tabuleiro)
+        if canMove:
+            for bloco in self.blocos:
+                bloco.moveDown()
+            return True
+        return False
+    
+    def moveUp(self, tabuleiro):
+        canMove = True
         for bloco in self.blocos:
-            bloco.moveUp()
-
-    def moveLeft(self):
+            canMove = canMove and bloco.checkUp(tabuleiro)
+        if canMove:
+            for bloco in self.blocos:
+                bloco.moveUp()
+            return True
+        return False
+    
+    def moveLeft(self, tabuleiro):
+        canMove = True
         for bloco in self.blocos:
-            bloco.moveLeft()
-
-    def moveRight(self):
+            canMove = canMove and bloco.checkLeft(tabuleiro)
+        if canMove:
+            for bloco in self.blocos:
+                bloco.moveLeft()
+            return True
+        return False
+    
+    def moveRight(self, tabuleiro):
+        canMove = True
         for bloco in self.blocos:
-            bloco.moveRight()
+            canMove = canMove and bloco.checkRight(tabuleiro)
+        if canMove:
+            for bloco in self.blocos:
+                bloco.moveRight()
+            return True
+        return False
 
 class PecaT(Peca):
     def __init__(self, x, y, color):
@@ -345,13 +381,23 @@ class PecaZ(Peca):
 
 class Tabuleiro:
     def __init__(self):
-        self.blocos = []
+        gray = {'r':0.5, 'g':0.5, 'b':0.5}
+        barreiraInferior = [Bloco(-5 + i, -10, gray) for i in range(10)]
+        barreiraEsquerda = [Bloco(-6, -10 + i, gray) for i in range(20)]
+        barreiraDireita  = [Bloco(5, -10 + i,  gray) for i in range(20)]
+        self.blocos = barreiraDireita + barreiraInferior + barreiraEsquerda
     def moverBlocos(self, peca):
         for bloco in peca.blocos:
             self.blocos.append(bloco)
     def render(self):
         for bloco in self.blocos:
             bloco.render()
+    def podeMover(self, x, y):
+        for bloco in self.blocos:
+            if bloco.x == x and bloco.y == y:
+                return False
+        return True
+
 
 def gerarPeca(shape='R', x='default', y='default', color='default'):
     if shape == 'R':
