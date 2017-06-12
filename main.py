@@ -2,7 +2,6 @@ from __future__ import division
 from __future__ import print_function
 
 import sys
-import time
 
 import OpenGL.GL as gl
 import OpenGL.GLU as glu
@@ -49,8 +48,12 @@ def reshape(w, h) :
 def idle():
     global tetris
     tetris.idle()
-    display()
+    glut.glutPostRedisplay()
 
+def mouse(x, y):
+    global tetris
+    tetris.camera(x, y)
+    glut.glutPostRedisplay()
 
 def keyboard(key, x, y) :
     global tetris
@@ -82,7 +85,7 @@ def keyboard(key, x, y) :
     glut.glutPostRedisplay()
 
 def main() :
-    global tetris, timer
+    global tetris
     tetris = Tetris()
 
     _ = glut.glutInit(sys.argv)
@@ -98,6 +101,7 @@ def main() :
     _ = glut.glutReshapeFunc(reshape)
     _ = glut.glutKeyboardFunc(keyboard)
     _ = glut.glutIdleFunc(idle)
+    _ = glut.glutMotionFunc(mouse);
 
     glut.glutMainLoop()
 
