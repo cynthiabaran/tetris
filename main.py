@@ -91,8 +91,8 @@ def main() :
     _ = glut.glutInit(sys.argv)
     glut.glutInitDisplayMode(glut.GLUT_DOUBLE | glut.GLUT_RGB | glut.GLUT_DEPTH)
 
-    glut.glutInitWindowSize(400, 600)
-    glut.glutInitWindowPosition(100, 100)
+    glut.glutInitWindowSize(600, 600)
+    glut.glutInitWindowPosition(0, 100)
     _ = glut.glutCreateWindow('Tetris!!!')
 
     init()

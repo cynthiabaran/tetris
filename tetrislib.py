@@ -13,6 +13,8 @@ import OpenGL.GLUT as glut
 blockSize = 0.2
 initialX = 0
 initialY = 9
+proximaX = 8
+proximaY = 8
 alturaTabuleiro = 20
 larguraTabuleiro = 10
 
@@ -20,6 +22,7 @@ class Tetris:
     def __init__(self):
         self.tabuleiro = Tabuleiro()
         self.peca = self.gerarPeca()
+        self.proximaPeca = self.gerarPeca(x=proximaX, y=proximaY)
         self.refreshDelay = 1
         self.oldRefreshDelay = 0
         self.timer = 0
@@ -31,6 +34,7 @@ class Tetris:
         gl.glPushMatrix()
         gl.glRotatef(self.cameraX, 0, self.cameraY, 0)
         self.peca.render()
+        self.proximaPeca.render()
         self.tabuleiro.render()
         gl.glPopMatrix()
 
@@ -104,7 +108,9 @@ class Tetris:
     def novaPeca(self):
         self.moverBlocos()
         self.checaLinhas()
-        self.peca = self.gerarPeca()
+        self.peca = self.proximaPeca
+        self.proximaPeca = self.gerarPeca(x=proximaX, y=proximaY)
+        self.peca.move(x = (initialX - proximaX), y = (initialY - proximaY))
 
     def checaLinhas(self):
         linhas = {key: [] for key in range(int(-alturaTabuleiro/2 + 1), int(alturaTabuleiro/2))}
@@ -126,11 +132,14 @@ class Tetris:
             bloco.moveDown()
         print(self.pontos)
 
-    def gerarPeca(self):
-        shape = random.choice(['T', 'O', 'I', 'L', 'J', 'S', 'Z'])
+    def gerarPeca(self, shape=False, x=False, y=False):
 
-        x = initialX
-        y = initialY
+        if shape == False:
+            shape = random.choice(['T', 'O', 'I', 'L', 'J', 'S', 'Z'])
+        if x == False:
+            x = initialX
+        if y == False:
+            y = initialY
 
         if shape == 'T':
             color = {'r':1.0, 'g':0.0, 'b':0.0}
@@ -221,6 +230,10 @@ class Peca:
     def render(self):
         for bloco in self.blocos:
             bloco.render()
+    def move(self, x=0, y=0):
+        for bloco in self.blocos:
+            bloco.x += x
+            bloco.y += y
 
 
 class PecaT(Peca):
