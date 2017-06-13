@@ -63,7 +63,7 @@ def keyboard(key, x, y) :
         tetris.novaPeca()
     elif key == 's':
         if not tetris.moveDown():
-            novaPeca()
+            tetris.novaPeca()
     elif key == 'a':
         tetris.moveLeft()
     elif key == 'd':

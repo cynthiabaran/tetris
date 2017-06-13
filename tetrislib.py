@@ -25,6 +25,7 @@ class Tetris:
         self.timer = 0
         self.cameraX = 0
         self.cameraY = 0
+        self.pontos = 0
 
     def render(self):
         gl.glPushMatrix()
@@ -102,12 +103,28 @@ class Tetris:
 
     def novaPeca(self):
         self.moverBlocos()
+        self.checaLinhas()
         self.peca = self.gerarPeca()
 
-    # def checaLinhas(self):
-    #     linhas = [[] for i in range(8)]
-    #     for bloco in self.blocos:
-
+    def checaLinhas(self):
+        linhas = {key: [] for key in range(int(-alturaTabuleiro/2 + 1), int(alturaTabuleiro/2))}
+        for bloco in self.tabuleiro.blocos:
+            if bloco.y in range(int(-alturaTabuleiro/2 + 1), int(alturaTabuleiro/2)):
+                if bloco.x in range(int(-larguraTabuleiro/2), int(larguraTabuleiro/2)):
+                    linhas[bloco.y].append(bloco)
+        moveDown = []
+        for key in linhas:
+            linha = linhas[key]
+            if len(linha) == 10:
+                self.pontos += 1
+                for bloco in linha:
+                    self.tabuleiro.blocos.remove(bloco)
+                for bloco in self.tabuleiro.blocos:
+                    if bloco.y >= key + 1:
+                        moveDown.append(bloco)
+        for bloco in moveDown:
+            bloco.moveDown()
+        print(self.pontos)
 
     def gerarPeca(self):
         shape = random.choice(['T', 'O', 'I', 'L', 'J', 'S', 'Z'])
@@ -186,6 +203,19 @@ class Bloco:
 
     def moveRight(self):
         self.x += 1
+
+class BlocoFixo(Bloco):
+    def moveDown(self):
+        pass
+
+    def moveUp(self):
+        pass
+
+    def moveLeft(self):
+        pass
+
+    def moveRight(self):
+        pass
 
 class Peca:
     def render(self):
@@ -477,9 +507,9 @@ class PecaZ(Peca):
 class Tabuleiro:
     def __init__(self):
         gray = {'r':0.5, 'g':0.5, 'b':0.5}
-        barreiraInferior = [Bloco(-larguraTabuleiro/2 + i, -alturaTabuleiro/2, gray) for i in range(larguraTabuleiro)]
-        barreiraEsquerda = [Bloco(-larguraTabuleiro/2 - 1, -alturaTabuleiro/2 + i, gray) for i in range(alturaTabuleiro)]
-        barreiraDireita  = [Bloco(larguraTabuleiro/2, -alturaTabuleiro/2 + i,  gray) for i in range(alturaTabuleiro)]
+        barreiraInferior = [BlocoFixo(-larguraTabuleiro/2 + i, -alturaTabuleiro/2, gray) for i in range(larguraTabuleiro)]
+        barreiraEsquerda = [BlocoFixo(-larguraTabuleiro/2 - 1, -alturaTabuleiro/2 + i, gray) for i in range(alturaTabuleiro)]
+        barreiraDireita  = [BlocoFixo(larguraTabuleiro/2, -alturaTabuleiro/2 + i,  gray) for i in range(alturaTabuleiro)]
         self.blocos = barreiraDireita + barreiraInferior + barreiraEsquerda
     def render(self):
         for bloco in self.blocos:
