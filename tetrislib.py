@@ -31,12 +31,11 @@ class Tetris:
         self.pontos = 0
 
     def render(self):
-        gl.glPushMatrix()
         gl.glRotatef(self.cameraX, 0, self.cameraY, 0)
         self.peca.render()
         self.proximaPeca.render()
         self.tabuleiro.render()
-        gl.glPopMatrix()
+        self.renderizarTexto(100,500,str(self.pontos))
 
     def idle(self):
         if self.refreshDelay and time.time() - self.timer > self.refreshDelay:
@@ -130,7 +129,6 @@ class Tetris:
                         moveDown.append(bloco)
         for bloco in moveDown:
             bloco.moveDown()
-        print(self.pontos)
 
     def gerarPeca(self, shape=False, x=False, y=False):
 
@@ -168,6 +166,12 @@ class Tetris:
         elif shape == 'Z':
             color = {'r':0.0, 'g':0.0, 'b':1.0}
             return PecaZ(x, y, color)
+
+    def renderizarTexto(self, x, y, text):
+        gl.glColor3f(1,1,1)
+        gl.glWindowPos2f(x,y)
+        for ch in text:
+            glut.glutBitmapCharacter( glut.GLUT_BITMAP_HELVETICA_18 , glut.ctypes.c_int( ord(ch) ) )
 
 
 
