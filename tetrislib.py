@@ -2,6 +2,7 @@ from __future__ import division
 from __future__ import print_function
 
 import sys
+import copy
 import time
 import random
 
@@ -84,10 +85,80 @@ class Tetris:
         return False
     
     def rotateClock(self):
-        self.peca.rotateClock()
+        pecaAux = copy.deepcopy(self.peca)
+        
+        pecaAux.rotateClock()
+        if self.checarColisao(pecaAux): 
+            self.peca.rotateClock()
+            return True
+
+        pecaAux.move(x=1)
+        if self.checarColisao(pecaAux):
+            self.peca.rotateClock()
+            self.peca.move(x=1)
+            return True
+        
+        pecaAux.move(x=1)
+        if self.checarColisao(pecaAux): 
+            self.peca.rotateClock()
+            self.peca.move(x=2)
+            return True
+
+        pecaAux.move(x=-3)
+        if self.checarColisao(pecaAux): 
+            self.peca.rotateClock()
+            self.peca.move(x=-1)
+            return True
+
+        pecaAux.move(x=-1)
+        if self.checarColisao(pecaAux): 
+            self.peca.rotateClock()
+            self.peca.move(x=-2)
+            return True
+
+        return False
+
     
     def rotateAntiClock(self):
-        self.peca.rotateAntiClock()
+        pecaAux = copy.deepcopy(self.peca)
+        
+        pecaAux.rotateAntiClock()
+        if self.checarColisao(pecaAux): 
+            self.peca.rotateAntiClock()
+            return True
+
+        pecaAux.move(x=1)
+        if self.checarColisao(pecaAux):
+            self.peca.rotateAntiClock()
+            self.peca.move(x=1)
+            return True
+        
+        pecaAux.move(x=1)
+        if self.checarColisao(pecaAux): 
+            self.peca.rotateAntiClock()
+            self.peca.move(x=2)
+            return True
+
+        pecaAux.move(x=-3)
+        if self.checarColisao(pecaAux): 
+            self.peca.rotateAntiClock()
+            self.peca.move(x=-1)
+            return True
+
+        pecaAux.move(x=-1)
+        if self.checarColisao(pecaAux): 
+            self.peca.rotateAntiClock()
+            self.peca.move(x=-2)
+            return True
+            
+        return False
+
+    def checarColisao(self, peca):
+        for blocoPeca in peca.blocos:
+            for blocoTab in self.tabuleiro.blocos:
+                if blocoPeca.x == blocoTab.x and blocoPeca.y == blocoTab.y:
+                    return False
+        return True
 
     def pause(self):
         if self.refreshDelay:
@@ -166,6 +237,7 @@ class Tetris:
         elif shape == 'Z':
             color = {'r':0.0, 'g':0.0, 'b':1.0}
             return PecaZ(x, y, color)
+
 
     def renderizarTexto(self, x, y, text):
         gl.glColor3f(1,1,1)
@@ -483,7 +555,6 @@ class PecaZ(Peca):
         self.blocos.append(Bloco(x - 1, y + 2, color))
         self.pos = 0
 
-
     def rotateClock(self):
         if self.pos == 0:
             self.blocos[0].moveLeft()
@@ -524,9 +595,9 @@ class PecaZ(Peca):
 class Tabuleiro:
     def __init__(self):
         gray = {'r':0.5, 'g':0.5, 'b':0.5}
-        barreiraInferior = [BlocoFixo(-larguraTabuleiro/2 + i, -alturaTabuleiro/2, gray) for i in range(larguraTabuleiro)]
+        barreiraInferior = [BlocoFixo(-larguraTabuleiro/2 + i, -alturaTabuleiro/2,     gray) for i in range(larguraTabuleiro)]
         barreiraEsquerda = [BlocoFixo(-larguraTabuleiro/2 - 1, -alturaTabuleiro/2 + i, gray) for i in range(alturaTabuleiro)]
-        barreiraDireita  = [BlocoFixo(larguraTabuleiro/2, -alturaTabuleiro/2 + i,  gray) for i in range(alturaTabuleiro)]
+        barreiraDireita  = [BlocoFixo( larguraTabuleiro/2,     -alturaTabuleiro/2 + i, gray) for i in range(alturaTabuleiro)]
         self.blocos = barreiraDireita + barreiraInferior + barreiraEsquerda
     def render(self):
         for bloco in self.blocos:
