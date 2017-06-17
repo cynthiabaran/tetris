@@ -30,13 +30,24 @@ class Tetris:
         self.cameraX = 0
         self.cameraY = 0
         self.pontos = 0
+        self.gameOver = False
 
     def render(self):
-        gl.glRotatef(self.cameraX, 0, self.cameraY, 0)
+        gl.glPushMatrix()
+        if not self.refreshDelay:
+            gl.glRotatef(self.cameraX, 0, self.cameraY, 0)
+            self.cameraX += 1
+            self.cameraY += 1
+        self.renderizarTexto(-2.5, 1.5, str(self.pontos))
+        if self.gameOver:
+            self.renderizarTexto(-1.0, 0, "GAME OVER", z = 1, color = {'r':1, 'g':0, 'b':0})
+        holograma = copy.deepcopy(self.peca)
+        while self.moveDown(holograma): pass
         self.peca.render()
+        holograma.render(True)
         self.proximaPeca.render()
         self.tabuleiro.render()
-        self.renderizarTexto(100,500,str(self.pontos))
+        gl.glPopMatrix()
 
     def idle(self):
         if self.refreshDelay and time.time() - self.timer > self.refreshDelay:
@@ -44,12 +55,14 @@ class Tetris:
             if not self.moveDown():
                 self.novaPeca()
     
-    def moveDown(self):
+    def moveDown(self, peca=False):
         canMove = True
-        for bloco in self.peca.blocos:
+        if peca == False:
+            peca = self.peca
+        for bloco in peca.blocos:
             canMove = canMove and bloco.checkDown(self.tabuleiro)
         if canMove:
-            for bloco in self.peca.blocos:
+            for bloco in peca.blocos:
                 bloco.moveDown()
             return True
         return False
@@ -181,6 +194,9 @@ class Tetris:
         self.peca = self.proximaPeca
         self.proximaPeca = self.gerarPeca(x=proximaX, y=proximaY)
         self.peca.move(x = (initialX - proximaX), y = (initialY - proximaY))
+        if not self.checarColisao(self.peca):
+            self.refreshDelay = 0
+            self.gameOver = True
 
     def checaLinhas(self):
         linhas = {key: [] for key in range(int(-alturaTabuleiro/2 + 1), int(alturaTabuleiro/2))}
@@ -239,13 +255,17 @@ class Tetris:
             return PecaZ(x, y, color)
 
 
-    def renderizarTexto(self, x, y, text):
-        gl.glColor3f(1,1,1)
-        gl.glWindowPos2f(x,y)
+    def renderizarTexto(self, x, y, text, z = 0, tamanho = 0.002, color = {'r':1, 'g':1, 'b':1}):
+        gl.glPushMatrix()
+        gl.glMaterialfv(gl.GL_FRONT, gl.GL_AMBIENT,  [color['r'], color['g'], color['b'], 1.0])
+        gl.glMaterialfv(gl.GL_FRONT, gl.GL_DIFFUSE,  [color['r'], color['g'], color['b'], 1.0])
+        gl.glMaterialfv(gl.GL_FRONT, gl.GL_SPECULAR, [color['r'], color['g'], color['b'], 1.0])
+        gl.glMaterialfv(gl.GL_FRONT, gl.GL_SHININESS, 100.0)
+        gl.glTranslatef(x, y, z)
+        gl.glScalef(tamanho, tamanho, tamanho)
         for ch in text:
-            glut.glutBitmapCharacter( glut.GLUT_BITMAP_HELVETICA_18 , glut.ctypes.c_int( ord(ch) ) )
-
-
+            glut.glutStrokeCharacter( glut.GLUT_STROKE_MONO_ROMAN , glut.ctypes.c_int( ord(ch) ) )
+        gl.glPopMatrix()
 
 class Bloco:
     def __init__(self, x, y, color):
@@ -253,16 +273,18 @@ class Bloco:
         self.y = y
         self.color = color
 
-    def render(self):
+    def render(self, holograma = False):
         gl.glPushMatrix()
         gl.glTranslatef(self.x * blockSize, self.y * blockSize, 0.0)
-        gl.glMaterialfv(gl.GL_FRONT, gl.GL_AMBIENT,  [self.color['r'], self.color['g'], self.color['b'], 1.0])
-        gl.glMaterialfv(gl.GL_FRONT, gl.GL_DIFFUSE,  [self.color['r'], self.color['g'], self.color['b'], 1.0])
-        gl.glMaterialfv(gl.GL_FRONT, gl.GL_SPECULAR, [self.color['r'], self.color['g'], self.color['b'], 1.0])
-        gl.glMaterialfv(gl.GL_FRONT, gl.GL_SHININESS, 100.0)
-        glut.glutSolidCube(blockSize)
-        # gl.glColor3f(self.color['r'], self.color['g'], self.color['b'])
-        # glut.glutWireCube(blockSize)
+        if holograma:
+            gl.glColor3f(self.color['r'], self.color['g'], self.color['b'])
+            glut.glutWireCube(blockSize)
+        else:
+            gl.glMaterialfv(gl.GL_FRONT, gl.GL_AMBIENT,  [self.color['r'], self.color['g'], self.color['b'], 1.0])
+            gl.glMaterialfv(gl.GL_FRONT, gl.GL_DIFFUSE,  [self.color['r'], self.color['g'], self.color['b'], 1.0])
+            gl.glMaterialfv(gl.GL_FRONT, gl.GL_SPECULAR, [self.color['r'], self.color['g'], self.color['b'], 1.0])
+            gl.glMaterialfv(gl.GL_FRONT, gl.GL_SHININESS, 100.0)
+            glut.glutSolidCube(blockSize)
         gl.glPopMatrix()
 
     def checkDown(self, tabuleiro):
@@ -302,10 +324,26 @@ class BlocoFixo(Bloco):
     def moveRight(self):
         pass
 
-class Peca:
+class Tabuleiro:
+    def __init__(self):
+        gray = {'r':0.5, 'g':0.5, 'b':0.5}
+        barreiraInferior = [BlocoFixo(-larguraTabuleiro/2 + i, -alturaTabuleiro/2,     gray) for i in range(larguraTabuleiro)]
+        barreiraEsquerda = [BlocoFixo(-larguraTabuleiro/2 - 1, -alturaTabuleiro/2 + i, gray) for i in range(alturaTabuleiro)]
+        barreiraDireita  = [BlocoFixo( larguraTabuleiro/2,     -alturaTabuleiro/2 + i, gray) for i in range(alturaTabuleiro)]
+        self.blocos = barreiraDireita + barreiraInferior + barreiraEsquerda
     def render(self):
         for bloco in self.blocos:
             bloco.render()
+    def podeMover(self, x, y):
+        for bloco in self.blocos:
+            if bloco.x == x and bloco.y == y:
+                return False
+        return True
+
+class Peca:
+    def render(self, holograma = False):
+        for bloco in self.blocos:
+            bloco.render(holograma)
     def move(self, x=0, y=0):
         for bloco in self.blocos:
             bloco.x += x
@@ -591,21 +629,4 @@ class PecaZ(Peca):
 
     def rotateAntiClock(self):
         for i in range(3): self.rotateClock()
-
-class Tabuleiro:
-    def __init__(self):
-        gray = {'r':0.5, 'g':0.5, 'b':0.5}
-        barreiraInferior = [BlocoFixo(-larguraTabuleiro/2 + i, -alturaTabuleiro/2,     gray) for i in range(larguraTabuleiro)]
-        barreiraEsquerda = [BlocoFixo(-larguraTabuleiro/2 - 1, -alturaTabuleiro/2 + i, gray) for i in range(alturaTabuleiro)]
-        barreiraDireita  = [BlocoFixo( larguraTabuleiro/2,     -alturaTabuleiro/2 + i, gray) for i in range(alturaTabuleiro)]
-        self.blocos = barreiraDireita + barreiraInferior + barreiraEsquerda
-    def render(self):
-        for bloco in self.blocos:
-            bloco.render()
-    def podeMover(self, x, y):
-        for bloco in self.blocos:
-            if bloco.x == x and bloco.y == y:
-                return False
-        return True
-
 

@@ -80,6 +80,8 @@ def keyboard(key, x, y) :
         tetris.rotateAntiClock()
     elif key == 'k':
         tetris.novaPeca()
+    elif key == "\x1b":
+        exit()
     else :
         return
     glut.glutPostRedisplay()
