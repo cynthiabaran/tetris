@@ -57,28 +57,28 @@ def mouse(x, y):
 
 def keyboard(key, x, y) :
     global tetris
-    if key == 'w':
+    if key == 'w' and tetris.refreshDelay:
         while tetris.moveDown():
             pass
         tetris.novaPeca()
-    elif key == 's':
+    elif key == 's' and tetris.refreshDelay:
         if not tetris.moveDown():
             tetris.novaPeca()
-    elif key == 'a':
+    elif key == 'a' and tetris.refreshDelay:
         tetris.moveLeft()
-    elif key == 'd':
+    elif key == 'd' and tetris.refreshDelay:
         tetris.moveRight()
-    elif key == 'f':
+    elif key == 'f' and tetris.refreshDelay:
         tetris.refreshDelay /= 1.1
-    elif key == 'r':
+    elif key == 'r' and tetris.refreshDelay:
         tetris.refreshDelay *= 1.1
     elif key == 'p':
         tetris.pause()
-    elif key == 'e':
+    elif key == 'e' and tetris.refreshDelay:
         tetris.rotateClock()
-    elif key == 'q':
+    elif key == 'q' and tetris.refreshDelay:
         tetris.rotateAntiClock()
-    elif key == 'k':
+    elif key == 'k' and tetris.refreshDelay:
         tetris.novaPeca()
     elif key == "\x1b":
         exit()

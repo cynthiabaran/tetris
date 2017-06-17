@@ -38,14 +38,20 @@ class Tetris:
             gl.glRotatef(self.cameraX, 0, self.cameraY, 0)
             self.cameraX += 1
             self.cameraY += 1
-        self.renderizarTexto(-2.5, 1.5, str(self.pontos))
-        if self.gameOver:
-            self.renderizarTexto(-1.0, 0, "GAME OVER", z = 1, color = {'r':1, 'g':0, 'b':0})
-        holograma = copy.deepcopy(self.peca)
-        while self.moveDown(holograma): pass
-        self.peca.render()
-        holograma.render(True)
-        self.proximaPeca.render()
+            if self.gameOver:
+                self.renderizarTexto(-1.0, 0, "GAME OVER", z = 1, color = {'r':1, 'g':0, 'b':0})
+            else:
+                self.renderizarTexto(-0.6, 0, "PAUSE", z = 1)
+
+            self.renderizarTexto(-0.2, -1.0, str(self.pontos), z = 1)
+        else:
+            holograma = copy.deepcopy(self.peca)
+            while self.moveDown(holograma): pass
+            self.peca.render()
+            holograma.render(True)
+            self.proximaPeca.render()
+            self.renderizarTexto(-2.5, 1.5, str(self.pontos))
+        
         self.tabuleiro.render()
         gl.glPopMatrix()
 
@@ -179,6 +185,9 @@ class Tetris:
             self.refreshDelay = 0
         else:
             self.refreshDelay = self.oldRefreshDelay
+        if self.gameOver:
+            self.__init__()
+
 
     def camera(self, x, y):
         self.cameraX = x
