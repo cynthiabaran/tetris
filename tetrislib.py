@@ -26,10 +26,12 @@ class Tetris:
         self.proximaPeca = self.gerarPeca(x=proximaX, y=proximaY)
         self.refreshDelay = 1
         self.oldRefreshDelay = 0
+        self.nivel = 1
         self.timer = 0
         self.cameraX = 0
         self.cameraY = 0
         self.pontos = 0
+        self.oldPontos = 0
         self.gameOver = False
 
     def render(self):
@@ -44,6 +46,7 @@ class Tetris:
                 self.renderizarTexto(-0.6, 0, "PAUSE", z = 1)
 
             self.renderizarTexto(-0.2, -1.0, str(self.pontos), z = 1)
+            self.renderizarTexto(-0.2, -2.0, str(self.nivel), z = 1)
         else:
             holograma = copy.deepcopy(self.peca)
             while self.moveDown(holograma): pass
@@ -51,6 +54,7 @@ class Tetris:
             holograma.render(True)
             self.proximaPeca.render()
             self.renderizarTexto(-2.5, 1.5, str(self.pontos))
+            self.renderizarTexto(-2.5, 0.5, str(self.nivel))
         
         self.tabuleiro.render()
         gl.glPopMatrix()
@@ -214,17 +218,23 @@ class Tetris:
                 if bloco.x in range(int(-larguraTabuleiro/2), int(larguraTabuleiro/2)):
                     linhas[bloco.y].append(bloco)
         moveDown = []
+        numeroLinhas = 0
         for key in linhas:
             linha = linhas[key]
-            if len(linha) == 10:
-                self.pontos += 1
+            if len(linha) == larguraTabuleiro:
+                numeroLinhas += 1
                 for bloco in linha:
                     self.tabuleiro.blocos.remove(bloco)
                 for bloco in self.tabuleiro.blocos:
                     if bloco.y >= key + 1:
                         moveDown.append(bloco)
+        self.pontos += numeroLinhas*numeroLinhas
         for bloco in moveDown:
             bloco.moveDown()
+        if self.pontos >= self.oldPontos + 10*self.nivel:
+            self.nivel += 1
+            self.refreshDelay /= 1.2
+            self.oldPontos = self.pontos
 
     def gerarPeca(self, shape=False, x=False, y=False):
 
