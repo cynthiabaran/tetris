@@ -57,7 +57,7 @@ def mouse(x, y):
 
 def keyboard(key, x, y) :
     global tetris
-    if key == 'w' and tetris.refreshDelay:
+    if key in ['w', '\x20'] and tetris.refreshDelay:
         while tetris.moveDown():
             pass
         tetris.novaPeca()
@@ -68,23 +68,29 @@ def keyboard(key, x, y) :
         tetris.moveLeft()
     elif key == 'd' and tetris.refreshDelay:
         tetris.moveRight()
-    elif key == 'f' and tetris.refreshDelay:
-        tetris.refreshDelay /= 1.1
-    elif key == 'r' and tetris.refreshDelay:
-        tetris.refreshDelay *= 1.1
-    elif key == 'p':
+    elif key in ['p', '\x0a', '\x0d']:
         tetris.pause()
     elif key == 'e' and tetris.refreshDelay:
         tetris.rotateClock()
     elif key == 'q' and tetris.refreshDelay:
         tetris.rotateAntiClock()
-    elif key == 'k' and tetris.refreshDelay:
-        tetris.novaPeca()
     elif key == "\x1b":
         exit()
     else :
         return
     glut.glutPostRedisplay()
+
+def special(key, x, y):
+    global tetris
+    if key == glut.GLUT_KEY_UP and tetris.refreshDelay:
+        tetris.rotateClock()
+    elif key == glut.GLUT_KEY_DOWN and tetris.refreshDelay:
+        if not tetris.moveDown():
+            tetris.novaPeca()
+    elif key == glut.GLUT_KEY_LEFT and tetris.refreshDelay:
+        tetris.moveLeft()
+    elif key == glut.GLUT_KEY_RIGHT and tetris.refreshDelay:
+        tetris.moveRight()
 
 def main() :
     global tetris
@@ -103,7 +109,8 @@ def main() :
     _ = glut.glutReshapeFunc(reshape)
     _ = glut.glutKeyboardFunc(keyboard)
     _ = glut.glutIdleFunc(idle)
-    _ = glut.glutMotionFunc(mouse);
+    _ = glut.glutMotionFunc(mouse)
+    _ = glut.glutSpecialFunc(special)
 
     glut.glutMainLoop()
 
